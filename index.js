@@ -4,7 +4,7 @@ const app = express();
 const route = require('./router/route');
 const path = require('path');
 const {Telegraf} = require('telegraf');
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 const viewPath = path.join(__dirname,"/../views");
 const staticPath = path.join(__dirname,"/../static");
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 app.use('/',route);
 
-const token = "6727773025:AAFtUq8LnsyL1_qZaJsBwhchxqIPPwNcmk8";
+const token = "7222442007:AAHgTzuLS8O1Dgei8krt7yJ19Ii21DG_yI8";
 const web_link = "https://telegame.onrender.com/auth/";
 const bot = new Telegraf(token);
 
