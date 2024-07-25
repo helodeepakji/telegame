@@ -79,6 +79,14 @@ const HeroComp = () => {
         </div>
         <img src={bijli} className="w-16 h-16" alt="Bijli" />
       </div>
+      <div>
+        <div className="containr">
+          <div className="progress progress-striped">
+            <div className="progress-bar" style={{ width: ((coins/500)*100)+'%' }}>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
