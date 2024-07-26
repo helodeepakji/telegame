@@ -18,7 +18,7 @@ const tele = window.Telegram.WebApp;
 const App = () => {
   const [user, setUser] = useState(() => {
     let storedUser = 'test';
-      fetch(`/sessionData`)
+      fetch(`/username`)
       .then(response => response.json())
       .then(data => {
         if (data.username) {

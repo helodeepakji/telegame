@@ -3,16 +3,27 @@ import hero from "../assets/hero.png";
 import bijli from "../assets/bijli.png";
 
 const HeroComp = () => {
-  const [coins, setCoins] = useState(() => {
-    const savedCoins = localStorage.getItem("coins");
-    return savedCoins ? JSON.parse(savedCoins) : 500;
-  });
-  const [earned, setEarned] = useState(() => {
-    const savedEarned = localStorage.getItem("earned");
-    return savedEarned ? JSON.parse(savedEarned) : 0;
-  });
+  const [coins, setCoins] = useState(500);
+  const [earned, setEarned] = useState(0);
+
+  useEffect(() => {
+    console.log('start');
+    fetch('/username')
+      .then(response => response.json())
+      .then(data => {
+        if (data.coin) {
+          setEarned(data.coin);
+          setCoins(data.energy)
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching username:', error);
+      });
+  }, []);
+
   const [showAnimation, setShowAnimation] = useState(false);
   const timerRef = useRef(null);
+
 
   const resetTimer = () => {
     if (timerRef.current) {
@@ -22,7 +33,7 @@ const HeroComp = () => {
       if (coins < 500) {
         setCoins((prev) => {
           const newCoins = Math.min(prev + 1, 500);
-          localStorage.setItem("coins", JSON.stringify(newCoins));
+          minusEnergy(newCoins);
           return newCoins;
         });
       }
@@ -32,6 +43,24 @@ const HeroComp = () => {
   const addCoin = async (coin) => {
     try {
       const response = await fetch(`/api/addCoin/${coin}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Coin added:', result);
+      } else {
+        console.error('Error adding coin:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding coin:', error);
+    }
+  };
+  
+  const minusEnergy = async (coin) => {
+    try {
+      const response = await fetch(`/api/useEnergy/${coin}`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -60,13 +89,12 @@ const HeroComp = () => {
     if (coins > 0) {
       setCoins((prev) => {
         const newCoins = prev - 1;
-        localStorage.setItem("coins", JSON.stringify(newCoins));
+        minusEnergy(newCoins)
         return newCoins;
       });
       setEarned((prev) => {
         const newEarned = prev + 1;
         addCoin(newEarned);
-        localStorage.setItem("earned", JSON.stringify(newEarned));
         return newEarned;
       });
       resetTimer();
@@ -101,7 +129,7 @@ const HeroComp = () => {
       <div>
         <div className="containr">
           <div className="progress progress-striped">
-            <div className="progress-bar" style={{ width: ((coins/500)*100)+'%' }}>
+            <div className="progress-bar" style={{ width: ((coins / 500) * 100) + '%' }}>
             </div>
           </div>
         </div>

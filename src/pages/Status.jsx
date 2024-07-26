@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useState ,useEffect }  from "react";
 import hero from "../assets/hero.png";
 import CameraIcon from "../components/icons/CameraIcon";
 import DownIcon from "../components/icons/Down";
 import Bottom from "../components/Bottom";
 import Fillers from "../components/Fillers";
+
+
+
+
 const Status = () => {
+  const [earned, setEarned] = useState(0);
+  useEffect(() => {
+    console.log('start');
+    fetch('/username')
+      .then(response => response.json())
+      .then(data => {
+        if (data.coin) {
+          setEarned(data.coin);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching username:', error);
+      });
+  }, []);
+
   return (
     <div className="uppercase  text-white  bg-gradient-to-b from-[#3430F8] to-black h-screen p-2 bg-opacity-15 ">
       <div className="w-full p-4 flex items-center justify-center  gap-5">
         <img src={hero} className="w-12 h-12 object-contain" />
-        <p className="font-semibold text-3xl">20.354 M</p>
+        <p className="font-semibold text-3xl">{earned}</p>
       </div>
       <p className="font-semibold text-[16px]  text-center">Legendary </p>
       <div className="w-72 h-12 border-b border-gray-400 block m-auto"></div>
