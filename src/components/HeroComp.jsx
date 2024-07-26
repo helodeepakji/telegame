@@ -29,6 +29,24 @@ const HeroComp = () => {
     }, 1000);
   };
 
+  const addCoin = async (coin) => {
+    try {
+      const response = await fetch(`/api/addCoin/${coin}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Coin added:', result);
+      } else {
+        console.error('Error adding coin:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding coin:', error);
+    }
+  };
+
   useEffect(() => {
     resetTimer();
     return () => {
@@ -47,6 +65,7 @@ const HeroComp = () => {
       });
       setEarned((prev) => {
         const newEarned = prev + 1;
+        addCoin(newEarned);
         localStorage.setItem("earned", JSON.stringify(newEarned));
         return newEarned;
       });
