@@ -43,7 +43,7 @@ route.get('/username', (req, res) => {
     }
 });
 
-route.get('api/addCoin/:coin', (req, res) => {
+route.get('/api/addCoin/:coin', (req, res) => {
     const coin = req.params.coin;
     if (req.session.username && req.session.user_id) {
         var user_id = req.session.user_id;
