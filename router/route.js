@@ -1,15 +1,36 @@
 const express = require('express');
+const connection = require('../db/connection');
 const path = require('path');
 const route = express.Router();
 
-route.get('/auth/:username/:id',(req,res) => {
+route.get('/auth/:username/:id', async (req, res) => {
     const username = req.params.username;
     const id = req.params.id;
     req.session.username = username;
     req.session.user_id = id;
-    console.log(id);
+
+    connection.query('SELECT * FROM users WHERE `user_id` = ?', [id], (error, results, fields) => {
+        if (error) {
+            console.error('Error fetching user:', error);
+            return res.status(500).send('Internal Server Error');
+        }
+        
+        if (results.length === 0) {
+            connection.query('INSERT INTO users (`user_id`, `username`) VALUES (?, ?)', [id, username], (insertError, insertResults, insertFields) => {
+                if (insertError) {
+                    console.error('Error inserting user:', insertError);
+                    return res.status(500).send('Internal Server Error');
+                }
+                console.log('User inserted:', username);
+            });
+        } else {
+            console.log('User exists:', results[0].username);
+        }
+    });
+
     res.redirect('/home');
-})
+});
+
 
 route.get('/home', (req, res) => {
     res.sendFile(path.join(process.cwd(),'build', 'index.html'));
